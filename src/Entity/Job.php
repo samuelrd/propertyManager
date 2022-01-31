@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\JobRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
@@ -24,6 +25,15 @@ class Job
     #[ORM\ManyToOne(targetEntity: Property::class, inversedBy: 'jobs')]
     #[ORM\JoinColumn(nullable: false)]
     private $property;
+
+    #[ORM\ManyToOne(targetEntity: JobStatus::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $status;
+
+    public function __construct()
+    {
+        $this->status = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -65,4 +75,38 @@ class Job
 
         return $this;
     }
+
+    public function getPropertyName(): string
+    {
+        return $this->property->getName();
+    }
+
+    public function getPropertyId(): string
+    {
+        return $this->property->getId();
+    }
+
+    public function getStatus(): ?JobStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?JobStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatusName(): string
+    {
+        return $this->status->getName();
+    }
+
+    public function getStatusId(): string
+    {
+        return $this->status->getId();
+    }
+
+
 }

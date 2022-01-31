@@ -3,23 +3,19 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PropertyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\JobStatusRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[ORM\Entity(repositoryClass: JobStatusRepository::class)]
 #[ApiResource]
-class Property
+class JobStatus
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Assert\NotBlank]
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 20)]
     private $name;
 
     public function getId(): ?int
@@ -38,4 +34,5 @@ class Property
 
         return $this;
     }
+
 }
