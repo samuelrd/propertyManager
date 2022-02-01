@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 class JobForm extends Component {
 
@@ -21,7 +21,8 @@ class JobForm extends Component {
                 name: "please select..."
             }
         ],
-        done: false
+        submitted: false,
+        errors: []
     }
 
     handleSummaryChange = (event) => {
@@ -51,7 +52,17 @@ class JobForm extends Component {
                 property: `api/properties/${this.state.property}`
             })
             .then(response => {
-                this.setState({done: true})
+                this.setState({submitted: true})
+            })
+            .catch(error => {
+                if(error.response.status == 422)
+                {
+                    this.setState({errors: error.response.data.violations})
+                }
+                else
+                {
+                    this.setState({errors: [{ propertyPath:"Unknown error", message: "Error on submission", code: "1"}]})
+                }
             })
         }
         else
@@ -63,7 +74,17 @@ class JobForm extends Component {
                 property: `api/properties/${this.state.property}`
             })
             .then(response => {
-                this.setState({done: true})
+                this.setState({submitted: true})
+            })
+            .catch(error => {
+                if(error.response.status == 422)
+                {
+                    this.setState({errors: error.response.data.violations})
+                }
+                else
+                {
+                    this.setState({errors: [{ propertyPath:"Unknown error", message: "Error on submission", code: "1"}]})
+                }
             })
         }
     }
@@ -96,52 +117,56 @@ class JobForm extends Component {
         }
       }
 
-
     render() {
-        if (this.state.done){
+        if (this.state.submitted){
             return (<Navigate to="/jobList" />)
         }
 
         return (
-            <form onSubmit={this.submitForm} className="col-md-6">
-                <div className="form-group">
-                    <label htmlFor="summary">Summary</label>
-                    <input  className="form-control"
-                            value={this.state.summary}
-                            onChange={this.handleSummaryChange}
-                            id="summary"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea   className="form-control"
-                                value={this.state.description}
-                                onChange={this.handleDescriptionChange}
-                                id="description"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="status">Status</label>
-                    <select className="form-control"
-                            value={this.state.status}
-                            onChange={this.handleStatusChange}
-                            id="status">
-                            {this.state.statuses.map(status =>
-                                <option key={status.id} value={status.id}>{status.name}</option>
+            <div>
+                {this.state.errors.map(error =>
+                    <div key={error.code}>{error.propertyPath}: {error.message}</div>
+                )}
+                <form onSubmit={this.submitForm} className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="summary">Summary</label>
+                        <input  className="form-control"
+                                value={this.state.summary}
+                                onChange={this.handleSummaryChange}
+                                id="summary"/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="description">Description</label>
+                        <textarea   className="form-control"
+                                    value={this.state.description}
+                                    onChange={this.handleDescriptionChange}
+                                    id="description"/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="status">Status</label>
+                        <select className="form-control"
+                                value={this.state.status}
+                                onChange={this.handleStatusChange}
+                                id="status">
+                                {this.state.statuses.map(status =>
+                                    <option key={status.id} value={status.id}>{status.name}</option>
+                                )}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="property">Property</label>
+                        <select  value={this.state.property}
+                                onChange={this.handlePropertyChange}
+                                className="form-control"
+                                id="property">
+                            {this.state.properties.map(property =>
+                                <option key={property.id} value={property.id}>{property.name}</option>
                             )}
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="property">Property</label>
-                    <select  value={this.state.property}
-                            onChange={this.handlePropertyChange}
-                            className="form-control"
-                            id="property">
-                        {this.state.properties.map(property =>
-                            <option key={property.id} value={property.id}>{property.name}</option>
-                        )}
-                    </select>
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
+                        </select>
+                    </div>
+                    <button type="submit" className="btn btn-primary">Submit</button>
+                </form>
+            </div>
         )
     }
 }
