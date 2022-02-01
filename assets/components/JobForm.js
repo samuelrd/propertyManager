@@ -51,6 +51,7 @@ class JobForm extends Component {
                 property: `api/properties/${this.state.property}`
             })
             .then(response => {
+                this.setState({done: true})
             })
         }
         else
@@ -62,6 +63,7 @@ class JobForm extends Component {
                 property: `api/properties/${this.state.property}`
             })
             .then(response => {
+                this.setState({done: true})
             })
         }
     }
@@ -96,6 +98,10 @@ class JobForm extends Component {
 
 
     render() {
+        if (this.state.done){
+            return (<Navigate to="/jobList" />)
+        }
+
         return (
             <form onSubmit={this.submitForm} className="col-md-6">
                 <div className="form-group">
