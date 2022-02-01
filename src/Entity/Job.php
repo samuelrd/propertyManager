@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\JobRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 #[ApiResource]
@@ -17,6 +18,7 @@ class Job
     private $id;
 
     #[ORM\Column(type: 'string', length: 150)]
+    #[Assert\NotBlank]
     private $summary;
 
     #[ORM\Column(type: 'string', length: 500, nullable: true)]
